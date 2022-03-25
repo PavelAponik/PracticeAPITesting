@@ -1,4 +1,7 @@
-package api;
+package api.POJO;
+
+import api.POJO.Address;
+import api.POJO.Company;
 
 public class Users {
     private Integer id;

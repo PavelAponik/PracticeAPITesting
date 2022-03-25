@@ -1,4 +1,4 @@
-package api;
+package api.POJO;
 
 public class Geo {
     public String lat;

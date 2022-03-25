@@ -1,4 +1,4 @@
-package api;
+package api.POJO;
 
 public class Company {
     private String name;

@@ -1,4 +1,4 @@
-package api;
+package api.POJO;
 
 public class Address {
     public String street;
