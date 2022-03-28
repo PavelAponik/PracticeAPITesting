@@ -24,6 +24,8 @@ public class Users {
         this.company = company;
     }
 
+
+
     public Integer getId() {
         return id;
     }

@@ -3,10 +3,8 @@ package api.test;
 import api.POJO.UserData;
 import api.POJO.Users;
 import api.resources.Specifications;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.restassured.http.ContentType;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -14,9 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 import static io.restassured.RestAssured.given;
@@ -25,10 +21,17 @@ import static org.hamcrest.Matchers.equalTo;
 public class TestAPI {
 
     public static final String URL = "https://jsonplaceholder.typicode.com";
-    public static final String user5FilePath = "src/test/java/api/resources/user5.json";
+    public static final String pathToExpectedResult = "src/test/java/api/resources/ExpectedResultUser5.json";
     Gson gson = new Gson();
 
-
+    public static String expectedUser5;
+    static {
+        try {
+            expectedUser5 = FileUtils.readFileToString(new File(pathToExpectedResult));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testCase_1(){
@@ -97,7 +100,7 @@ public class TestAPI {
     }
 
     @Test
-    public void testCase_5() throws FileNotFoundException {
+    public void testCase_5(){
         Specifications.installSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOK200());
         List<Users> users = given()
                 .when()
@@ -105,15 +108,22 @@ public class TestAPI {
                 .then()
                 .extract().body().jsonPath().getList("", Users.class);
 
+        String actualUser5 = gson.toJson(users.get(4));
 
-        String json = gson.toJson(users.get(4));
+        System.out.println(actualUser5);
+        System.out.println(expectedUser5);
+        Assert.assertEquals(actualUser5, expectedUser5);
+    }
 
-        JsonObject user5json =  JsonParser.parseString(json).getAsJsonObject();
-        Object obj = gson.fromJson(new FileReader(user5FilePath), Users.class);
-        String testString = obj.toString();
-        System.out.println(user5json);
-        //System.out.println(user5FromFile + "from json file");
-        System.out.println(json);
-        Assert.assertEquals(json, testString);
+    @Test
+    public void testCase_6(){
+        Specifications.installSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOK200());
+        String user = given()
+                .when()
+                .get("/users/5")
+                .then()
+                .extract().response().asString();
+
+        Assert.assertEquals(user, expectedUser5);
     }
 }
