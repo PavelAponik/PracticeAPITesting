@@ -1,17 +1,22 @@
-package api.POJO;
+package api.pojo;
 
-import api.POJO.Address;
-import api.POJO.Company;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Users {
     private Integer id;
     private String name;
     private String username;
     private String email;
-    Address address;
+    private Address address;
     private String phone;
     private String website;
-    Company company;
+    private Company company;
+
+    public static final String pathToExpectedResult = "src/test/java/api/resources/ExpectedResultUser5.json";
 
     public Users(Integer id, String name, String username, String email, Address address, String phone, String website, Company company) {
         this.id = id;
@@ -22,6 +27,15 @@ public class Users {
         this.phone = phone;
         this.website = website;
         this.company = company;
+    }
+
+    public static String expectedUser5;
+    static {
+        try {
+            expectedUser5 = FileUtils.readFileToString(new File(pathToExpectedResult), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

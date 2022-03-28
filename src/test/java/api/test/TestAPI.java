@@ -1,37 +1,41 @@
 package api.test;
 
-import api.POJO.UserData;
-import api.POJO.Users;
+import api.pojo.UserData;
+import api.pojo.Users;
 import api.resources.Specifications;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.restassured.http.ContentType;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
+import static api.pojo.Users.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class TestAPI {
 
     public static final String URL = "https://jsonplaceholder.typicode.com";
-    public static final String pathToExpectedResult = "src/test/java/api/resources/ExpectedResultUser5.json";
+    SoftAssert softAssert = new SoftAssert();
     Gson gson = new Gson();
 
-    public static String expectedUser5;
-    static {
-        try {
-            expectedUser5 = FileUtils.readFileToString(new File(pathToExpectedResult));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public static final String body = "test body";
+    public static final String title = "test title";
+    public static final Integer userId = 1;
+
+    public static JSONObject payload = new JSONObject()
+            .put("body", body)
+            .put("title", title)
+            .put("userId", userId);
+
+
 
     @Test
     public void testCase_1(){
@@ -39,7 +43,7 @@ public class TestAPI {
         List<UserData> users = given()
                 .when()
                 .get("/posts")
-                .then().log().all()
+                .then()
                 .extract().body().jsonPath().getList("", UserData.class);
         List<Integer> ids = users.stream().map(UserData::getId).toList();
         List<Integer> sortedIds = ids.stream().sorted().toList();
@@ -52,15 +56,16 @@ public class TestAPI {
         String title = given()
                 .when()
                 .get("/posts/99")
-                .then().log().body()
+                .then()
                 .extract().body().jsonPath().get("title").toString();
         String body = given()
                 .when()
                 .get("/posts/99")
                 .then()
                 .extract().body().jsonPath().get("body").toString();
-        Assert.assertNotNull(title);
-        Assert.assertNotNull(body);
+        softAssert.assertNotNull(title);
+        softAssert.assertNotNull(body);
+        softAssert.assertAll();
     }
 
     @Test
@@ -69,34 +74,25 @@ public class TestAPI {
         given()
                 .when()
                 .get("/posts/150")
-                .then().log().all()
+                .then()
                 .assertThat().body("", equalTo(Collections.emptyMap()));
     }
 
     @Test
     public void testCase_4() {
         Specifications.installSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOK201());
-        String body = "test body";
-        String title = "test title";
-        int userId = 1;
-
-        JSONObject payload = new JSONObject()
-                .put("body", body)
-                .put("title", title)
-                .put("userId", userId);
-
         UserData user = given()
-                .contentType(ContentType.JSON)
                 .body(payload.toString())
                 .when()
                 .post("/posts")
-                .then().log().all()
+                .then()
                 .extract().body().as(UserData.class);
 
-        Assert.assertEquals(user.getUserId(), userId);
-        Assert.assertEquals(user.getTitle(), title);
-        Assert.assertEquals(user.getBody(), body);
-        Assert.assertNotNull(user.getId());
+        softAssert.assertEquals(user.getUserId(), userId);
+        softAssert.assertEquals(user.getTitle(), title);
+        softAssert.assertEquals(user.getBody(), body);
+        softAssert.assertNotNull(user.getId());
+        softAssert.assertAll();
     }
 
     @Test
@@ -110,7 +106,6 @@ public class TestAPI {
 
         String actualUser5 = gson.toJson(users.get(4));
 
-        System.out.println(actualUser5);
         System.out.println(expectedUser5);
         Assert.assertEquals(actualUser5, expectedUser5);
     }
@@ -123,7 +118,6 @@ public class TestAPI {
                 .get("/users/5")
                 .then()
                 .extract().response().asString();
-
         Assert.assertEquals(user, expectedUser5);
     }
 }
