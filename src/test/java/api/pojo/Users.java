@@ -38,8 +38,6 @@ public class Users {
         }
     }
 
-
-
     public Integer getId() {
         return id;
     }

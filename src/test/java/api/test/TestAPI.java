@@ -4,15 +4,10 @@ import api.pojo.UserData;
 import api.pojo.Users;
 import api.resources.Specifications;
 import com.google.gson.Gson;
-import io.restassured.http.ContentType;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -25,7 +20,6 @@ public class TestAPI {
     public static final String URL = "https://jsonplaceholder.typicode.com";
     SoftAssert softAssert = new SoftAssert();
     Gson gson = new Gson();
-
     public static final String body = "test body";
     public static final String title = "test title";
     public static final Integer userId = 1;
@@ -34,8 +28,6 @@ public class TestAPI {
             .put("body", body)
             .put("title", title)
             .put("userId", userId);
-
-
 
     @Test
     public void testCase_1(){
@@ -87,7 +79,6 @@ public class TestAPI {
                 .post("/posts")
                 .then()
                 .extract().body().as(UserData.class);
-
         softAssert.assertEquals(user.getUserId(), userId);
         softAssert.assertEquals(user.getTitle(), title);
         softAssert.assertEquals(user.getBody(), body);
@@ -103,21 +94,20 @@ public class TestAPI {
                 .get("/users")
                 .then()
                 .extract().body().jsonPath().getList("", Users.class);
-
-        String actualUser5 = gson.toJson(users.get(4));
-
-        System.out.println(expectedUser5);
+        Users user5 = users.stream().filter(u -> u.getId().equals(5)).findFirst().orElse(null);
+        String actualUser5 = gson.toJson(user5);
         Assert.assertEquals(actualUser5, expectedUser5);
     }
 
     @Test
     public void testCase_6(){
         Specifications.installSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOK200());
-        String user = given()
+        Users user = given()
                 .when()
                 .get("/users/5")
                 .then()
-                .extract().response().asString();
-        Assert.assertEquals(user, expectedUser5);
+                .extract().body().as(Users.class);
+        String actualUser = gson.toJson(user);
+        Assert.assertEquals(actualUser, expectedUser5);
     }
 }
