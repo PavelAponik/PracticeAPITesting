@@ -16,7 +16,7 @@ public class Users {
     private String website;
     private Company company;
 
-    public static final String pathToExpectedResult = "src/test/java/api/resources/ExpectedResultUser5.json";
+    private static final String pathToExpectedResult = "src/test/java/api/resources/ExpectedResultUser5.json";
 
     public Users(Integer id, String name, String username, String email, Address address, String phone, String website, Company company) {
         this.id = id;

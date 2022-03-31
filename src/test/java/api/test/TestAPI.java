@@ -11,6 +11,7 @@ import org.testng.asserts.SoftAssert;
 import java.util.*;
 
 
+import static api.pojo.UserData.payload;
 import static api.pojo.Users.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,14 +21,9 @@ public class TestAPI {
     public static final String URL = "https://jsonplaceholder.typicode.com";
     SoftAssert softAssert = new SoftAssert();
     Gson gson = new Gson();
-    public static final String body = "test body";
-    public static final String title = "test title";
-    public static final Integer userId = 1;
-
-    public static JSONObject payload = new JSONObject()
-            .put("body", body)
-            .put("title", title)
-            .put("userId", userId);
+    private static final String body = "test body";
+    private static final String title = "test title";
+    private static final Integer userId = 1;
 
     @Test
     public void testCase_1(){
@@ -74,7 +70,7 @@ public class TestAPI {
     public void testCase_4() {
         Specifications.installSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOK201());
         UserData user = given()
-                .body(payload.toString())
+                .body(payload)
                 .when()
                 .post("/posts")
                 .then()
