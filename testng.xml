@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true" name="D:/Java lessons/PracticeAPITesting-master/src">
+        <classes>
+            <class name="api.test.TestAPI">
+                <methods>
+                    <include name="testCase_1"/>
+                    <include name="testCase_2"/>
+                    <include name="testCase_3"/>
+                    <include name="testCase_4"/>
+                    <include name="testCase_5"/>
+                    <include name="testCase_6"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

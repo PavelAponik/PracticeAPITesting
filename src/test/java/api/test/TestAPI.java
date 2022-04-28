@@ -4,7 +4,6 @@ import api.pojo.UserData;
 import api.pojo.Users;
 import api.resources.Specifications;
 import com.google.gson.Gson;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
@@ -14,6 +13,7 @@ import java.util.*;
 import static api.pojo.UserData.payload;
 import static api.pojo.Users.*;
 import static io.restassured.RestAssured.given;
+import static java.util.Collections.*;
 import static org.hamcrest.Matchers.equalTo;
 
 public class TestAPI {
@@ -35,7 +35,7 @@ public class TestAPI {
                 .extract().body().jsonPath().getList("", UserData.class);
         List<Integer> ids = users.stream().map(UserData::getId).toList();
         List<Integer> sortedIds = ids.stream().sorted().toList();
-        Assert.assertEquals(ids, sortedIds);
+        Assert.assertEquals(sortedIds, ids);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TestAPI {
                 .when()
                 .get("/posts/150")
                 .then()
-                .assertThat().body("", equalTo(Collections.emptyMap()));
+                .assertThat().body("", equalTo(emptyMap()));
     }
 
     @Test
